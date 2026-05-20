@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users - Task Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        .nav { background: #333; overflow: hidden; border-radius: 5px; margin-bottom: 20px; }
+        .nav a { float: left; color: white; padding: 14px 20px; text-decoration: none; }
+        .nav a:hover { background: #575757; }
+        .nav .right { float: right; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #28a745; color: white; }
+        select { padding: 5px; }
+        .btn { display: inline-block; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .badge-admin { background: #dc3545; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; }
+        .badge-user { background: #28a745; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{% url 'dashboard' %}">📋 Dashboard</a>
+        <a href="{% url 'task_create' %}">➕ Create Task</a>
+        <a href="{% url 'profile' %}">👤 Profile</a>
+        <a href="{% url 'audit_log' %}">📜 Audit Log</a>
+        <a href="{% url 'manage_users' %}">👥 Manage Users</a>
+        <a href="{% url 'logout' %}" class="right">🚪 Logout</a>
+    </div>
+    
+    <h1>👥 Manage Users</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Current Role</th>
+                <th>Change Role</th>
+                <th>Date Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.username }}{% if u == user %} <strong>(You)</strong>{% endif %}</td>
+                <td>{{ u.email }}</td>
+                <td>{% if u.role == 'admin' %}<span class="badge-admin">Admin</span>{% else %}<span class="badge-user">User</span>{% endif %}</td>
+                <td>
+                    <form method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ u.id }}">
+                        <select name="role" {% if u == user %}disabled{% endif %}>
+                            <option value="user" {% if u.role == 'user' %}selected{% endif %}>User</option>
+                            <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        {% if u != user %}
+                            <button type="submit" class="btn">Update</button>
+                        {% endif %}
+                    </form>
+                </td>
+                <td>{{ u.date_joined|date:"Y-m-d" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
