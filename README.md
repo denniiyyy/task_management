@@ -26,9 +26,9 @@ Follow these sequential procedures to deploy the development environment locally
    cd task_management
    ```
 2. Initialize Local Virtual Environment:
-```bash
-python -m venv venv
-```
+   ```bash
+   python -m venv venv
+   ```
 3. Activate Environment Context:
 ```bash
 venv\Scripts\activate
