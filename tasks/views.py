@@ -41,6 +41,38 @@ def login_view(request):
 
 def register_view(request):
     if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password') # Grab the second password
+        
+        # INTENTIONAL CRASH: Force a ValueError if they don't match
+        if password != confirm_password:
+            raise ValueError("CRITICAL AUTHENTICATION FAILURE: Password and Confirm Password do not match!")
+
+        if CustomUser.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists')
+            return render(request, 'tasks/register.html', {'form': RegisterForm(request.POST)})
+        
+        user = CustomUser.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            role='user'
+        )
+        log_audit(user, 'LOGIN_SUCCESS', request, 'User registered successfully')
+        login(request, user)
+        messages.success(request, 'Registration successful!')
+        return redirect('dashboard')
+        
+    else:
+        form = RegisterForm()
+        
+    return render(request, 'tasks/register.html', {'form': form})
+
+"""
+def register_view(request):
+    if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -64,7 +96,7 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, 'tasks/register.html', {'form': form})
-
+"""
 @login_required
 def logout_view(request):
     log_audit(request.user, 'LOGOUT', request)
