@@ -22,8 +22,8 @@ Follow these sequential procedures to deploy the development environment locally
 ### Step-by-Step Setup
 1. **Clone the Project Repository:**
    ```bash
-   git clone [https://github.com/denniiyyy/task_management.git](https://github.com/denniiyyy/task_management.git)
-   cd task_management
+   git clone https://github.com/denniiyyy/secure-task-app-django.git
+   cd secure-task-app-django
    ```
 2. Initialize Local Virtual Environment:
    ```bash
